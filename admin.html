@@ -1,0 +1,117 @@
+﻿<!DOCTYPE html>
+<html lang="ar">
+<head>
+<meta charset="UTF-8">
+<title>صفحة تصحيح مس رضوي</title>
+<style>
+body{
+    font-family:Arial;
+    direction:rtl;
+    background:#f4f6f9;
+    margin:0;
+    display:flex;
+}
+.sidebar{
+    width:250px;
+    background:#e3f2fd;
+    padding:20px;
+    height:100vh;
+    overflow-y:auto;
+}
+.sidebar h3{
+    margin-top:0;
+    color:#1e88e5;
+}
+.sidebar button{
+    display:block;
+    width:100%;
+    margin:5px 0;
+    padding:8px;
+    border:none;
+    background:#90caf9;
+    color:#000;
+    cursor:pointer;
+    text-align:right;
+}
+.container{
+    flex:1;
+    padding:30px;
+}
+#info p{
+    margin:5px 0;
+}
+</style>
+</head>
+<body>
+
+<div class="sidebar">
+<h3>قائمة الطلاب</h3>
+<div id="studentList">
+<!-- أسماء الطلاب هتظهر هنا -->
+</div>
+</div>
+
+<div class="container">
+<h2>صفحة تصحيح مس رضوي</h2>
+
+<div id="loginDiv">
+<input type="password" id="pass" placeholder="ادخل كلمة السر">
+<button onclick="checkPass()">دخول</button>
+</div>
+
+<div id="dataDiv" style="display:none;">
+<h3>بيانات الطالب:</h3>
+<div id="info"></div>
+<h3>الإجابات:</h3>
+<div id="answers"></div>
+</div>
+</div>
+
+<script>
+// الباسورد
+let adminPassword = "7720";
+
+function checkPass(){
+    let input = document.getElementById("pass").value;
+    if(input === adminPassword){
+        document.getElementById("loginDiv").style.display="none";
+        document.getElementById("dataDiv").style.display="block";
+        loadStudentList();
+    } else {
+        alert("كلمة السر غير صحيحة");
+    }
+}
+
+// جلب قائمة الطلاب من localStorage
+function loadStudentList(){
+    let students = JSON.parse(localStorage.getItem("allStudents") || "[]");
+    let container = document.getElementById("studentList");
+    container.innerHTML = "";
+    students.forEach((student, index)=>{
+        let btn = document.createElement("button");
+        btn.textContent = student.name;
+        btn.onclick = ()=> showStudentData(index);
+        container.appendChild(btn);
+    });
+}
+
+// عرض بيانات الطالب وإجاباته
+function showStudentData(index){
+    let students = JSON.parse(localStorage.getItem("allStudents") || "[]");
+    let student = students[index];
+
+    document.getElementById("info").innerHTML =
+        "<p><b>الاسم:</b> " + student.name + "</p>" +
+        "<p><b>الايميل:</b> " + student.email + "</p>" +
+        "<p><b>نوع الاشتراك:</b> " + student.type + "</p>" +
+        "<p><b>الدرجة:</b> " + student.score + "</p>";
+
+    let answersHTML = "";
+    for(let key in student.answers){
+        answersHTML += "<p><b>"+key+":</b> "+student.answers[key]+"</p>";
+    }
+    document.getElementById("answers").innerHTML = answersHTML;
+}
+</script>
+</body>
+</html>
