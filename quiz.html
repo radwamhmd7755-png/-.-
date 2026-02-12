@@ -61,7 +61,15 @@ button:hover{
 <h2>اختبار شامل - الدرس التمهيدي، الانحلال الحراري، والإحلال البسيط</h2>
 
 <form id="quizForm">
+<div class="question">
+الاسم:
+<input type="text" id="studentName" required>
+</div>
 
+<div class="question">
+الإيميل:
+<input type="email" id="studentEmail" required>
+</div>
 <div class="section-title">أولاً: أسئلة الاختيار من متعدد (7 أسئلة)</div>
 
 <div class="question">
@@ -228,34 +236,43 @@ button:hover{
 
 </form>
 </div>
-
 <script>
 function submitQuiz(){
-    let inputs = document.querySelectorAll("input[type=radio]:checked");
-    let textareas = document.querySelectorAll("textarea");
 
-    if(inputs.length < 14){
-        alert("يجب حل جميع أسئلة الاختيار من متعدد وصح أم خطأ");
+    let name = document.getElementById("studentName").value.trim();
+    let email = document.getElementById("studentEmail").value.trim();
+
+    if(name === "" || email === ""){
+        alert("من فضلك اكتب الاسم والإيميل");
         return;
     }
 
-    for(let t of textareas){
-        if(t.value.trim() === ""){
-            alert("يجب الإجابة على جميع الأسئلة المقالية");
-            return;
-        }
+    let answers = [];
+
+    for(let i=1;i<=14;i++){
+        let selected = document.querySelector(input[name="q${i}"]:checked);
+        answers.push(selected ? selected.value : "");
     }
 
-    alert("تم إرسال الإجابة بنجاح!"); 
-    // هنا يمكنك إضافة كود حفظ النتائج أو إرسالها للإيميل
-}
-</script>
-<script>
-document.addEventListener("keydown", function(e){
-    if(e.altKey && e.key.toLowerCase() === "z"){
-        window.location.href = "admin.html";
+    for(let i=15;i<=20;i++){
+        let text = document.querySelector(textarea[name="q${i}"]).value;
+        answers.push(text);
     }
-});
+
+    let users = JSON.parse(localStorage.getItem("quizUsers")) || [];
+
+    users.push({
+        name: name,
+        email: email,
+        answers: answers
+    });
+
+    localStorage.setItem("quizUsers", JSON.stringify(users));
+
+    alert("تم حفظ الإجابات بنجاح ✅");
+
+    document.getElementById("quizForm").reset();
+}
 </script>
 </body>
 </html>
