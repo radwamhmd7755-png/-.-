@@ -39,6 +39,14 @@ textarea{
     margin-top:10px;
     padding:8px;
 }
+input[type=text], input[type=email]{
+    width:100%;
+    padding:8px;
+    margin-top:5px;
+    margin-bottom:15px;
+    border-radius:5px;
+    border:1px solid #ccc;
+}
 button{
     width:100%;
     padding:12px;
@@ -61,15 +69,19 @@ button:hover{
 <h2>اختبار شامل - الدرس التمهيدي، الانحلال الحراري، والإحلال البسيط</h2>
 
 <form id="quizForm">
+
+<!-- حقول الاسم والايميل -->
 <div class="question">
-الاسم:
-<input type="text" id="studentName" required>
+<label>الاسم:</label>
+<input type="text" id="studentName" placeholder="اكتب اسمك">
 </div>
 
 <div class="question">
-الإيميل:
-<input type="email" id="studentEmail" required>
+<label>الإيميل:</label>
+<input type="email" id="studentEmail" placeholder="example@email.com">
 </div>
+
+<!-- باقي الأسئلة -->
 <div class="section-title">أولاً: أسئلة الاختيار من متعدد (7 أسئلة)</div>
 
 <div class="question">
@@ -175,7 +187,6 @@ button:hover{
 <input type="radio" name="q10" value="صح"> صح
 <input type="radio" name="q10" value="خطأ"> خطأ
 </div>
-
 <div class="question">
 11- لون أكسيد الزئبق أحمر ولون الزئبق فضي ( )<br>
 <input type="radio" name="q11" value="صح"> صح
@@ -232,14 +243,15 @@ button:hover{
 <textarea name="q20"></textarea>
 </div>
 
-<button type="submitQuiz()">إرسال الإجابة</button>
+<!-- زرار إرسال -->
+<button type="button" onclick="saveQuiz()">إرسال الإجابة</button>
 
 </form>
 </div>
-<script>
-document.getElementById("quizForm").addEventListener("submit", function(e){
 
-    e.preventDefault(); // يمنع إعادة تحميل الصفحة
+<!-- سكربت تخزين الإجابات -->
+<script>
+function saveQuiz() {
 
     let name = document.getElementById("studentName").value.trim();
     let email = document.getElementById("studentEmail").value.trim();
@@ -251,30 +263,43 @@ document.getElementById("quizForm").addEventListener("submit", function(e){
 
     let answers = [];
 
-    for(let i=1;i<=14;i++){
-        let selected = document.querySelector(input[name="q${i}"]:checked);
+    // إجابات الاختيار من متعدد وصح/خطأ
+    for(let i=1; i<=14; i++){
+        let selected = document.querySelector(`input[name="q${i}"]:checked`);
         answers.push(selected ? selected.value : "لم يجب");
     }
 
-    for(let i=15;i<=20;i++){
-        let text = document.querySelector(textarea[name="q${i}"]).value;
+    // إجابات المقالية
+    for(let i=15; i<=20; i++){
+        let text = document.querySelector(`textarea[name="q${i}"]`).value;
         answers.push(text || "لم يجب");
     }
 
+    // جلب البيانات السابقة من LocalStorage
     let users = JSON.parse(localStorage.getItem("quizUsers")) || [];
 
+    // إضافة الطالب الحالي
     users.push({
-        name:name,
-        email:email,
-        answers:answers
+        name: name,
+        email: email,
+        answers: answers
     });
 
+    // حفظ البيانات
     localStorage.setItem("quizUsers", JSON.stringify(users));
 
-    alert("تم الحفظ بنجاح ✅");
+    alert("تم حفظ الإجابات بنجاح ✅");
 
-    this.reset();
+    document.getElementById("quizForm").reset();
+}
+
+// Alt+Z لفتح صفحة الأدمن
+document.addEventListener("keydown", function(e){
+    if(e.altKey && e.key.toLowerCase() === "z"){
+        window.location.href = "admin.html";
+    }
 });
 </script>
+
 </body>
 </html>
