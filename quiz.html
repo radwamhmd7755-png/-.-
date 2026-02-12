@@ -232,18 +232,20 @@ button:hover{
 <textarea name="q20"></textarea>
 </div>
 
-<button type="button" onclick="submitQuiz()">إرسال الإجابة</button>
+<button type="submitQuiz()">إرسال الإجابة</button>
 
 </form>
 </div>
 <script>
-function submitQuiz(){
+document.getElementById("quizForm").addEventListener("submit", function(e){
+
+    e.preventDefault(); // يمنع إعادة تحميل الصفحة
 
     let name = document.getElementById("studentName").value.trim();
     let email = document.getElementById("studentEmail").value.trim();
 
     if(name === "" || email === ""){
-        alert("من فضلك اكتب الاسم والإيميل");
+        alert("اكتب الاسم والإيميل");
         return;
     }
 
@@ -251,28 +253,28 @@ function submitQuiz(){
 
     for(let i=1;i<=14;i++){
         let selected = document.querySelector(input[name="q${i}"]:checked);
-        answers.push(selected ? selected.value : "");
+        answers.push(selected ? selected.value : "لم يجب");
     }
 
     for(let i=15;i<=20;i++){
         let text = document.querySelector(textarea[name="q${i}"]).value;
-        answers.push(text);
+        answers.push(text || "لم يجب");
     }
 
     let users = JSON.parse(localStorage.getItem("quizUsers")) || [];
 
     users.push({
-        name: name,
-        email: email,
-        answers: answers
+        name:name,
+        email:email,
+        answers:answers
     });
 
     localStorage.setItem("quizUsers", JSON.stringify(users));
 
-    alert("تم حفظ الإجابات بنجاح ✅");
+    alert("تم الحفظ بنجاح ✅");
 
-    document.getElementById("quizForm").reset();
-}
+    this.reset();
+});
 </script>
 </body>
 </html>
