@@ -2,116 +2,182 @@
 <html lang="ar">
 <head>
 <meta charset="UTF-8">
-<title>صفحة تصحيح مس رضوي</title>
+<title>الاختبار الشامل</title>
 <style>
 body{
-    font-family:Arial;
-    direction:rtl;
-    background:#f4f6f9;
-    margin:0;
-    display:flex;
-}
-.sidebar{
-    width:250px;
-    background:#e3f2fd;
-    padding:20px;
-    height:100vh;
-    overflow-y:auto;
-}
-.sidebar h3{
-    margin-top:0;
-    color:#1e88e5;
-}
-.sidebar button{
-    display:block;
-    width:100%;
-    margin:5px 0;
-    padding:8px;
-    border:none;
-    background:#90caf9;
-    color:#000;
-    cursor:pointer;
-    text-align:right;
+font-family:Arial;
+direction:rtl;
+background:#f4f6f9;
+margin:0;
 }
 .container{
-    flex:1;
-    padding:30px;
+width:90%;
+max-width:900px;
+margin:30px auto;
+background:white;
+padding:30px;
+border-radius:10px;
+box-shadow:0 0 15px rgba(0,0,0,0.1);
 }
-#info p{
-    margin:5px 0;
+h2{
+color:#1e88e5;
+text-align:center;
+}
+.section-title{
+margin-top:30px;
+font-weight:bold;
+color:#444;
+}
+.question{
+margin:20px 0;
+padding:10px;
+border-bottom:1px solid #ddd;
+}
+textarea{
+width:100%;
+height:80px;
+margin-top:10px;
+padding:8px;
+}
+button{
+width:100%;
+padding:12px;
+background:#1e88e5;
+color:white;
+border:none;
+border-radius:6px;
+cursor:pointer;
+font-size:16px;
+margin-top:20px;
+}
+button:hover{
+background:#1565c0;
+}
+#adminDiv{
+display:none;
+margin-top:20px;
+}
+table{
+width:100%;
+border-collapse:collapse;
+margin-top:20px;
+}
+th, td{
+border:1px solid #ddd;
+padding:8px;
+text-align:center;
+}
+th{
+background:#1e88e5;
+color:white;
 }
 </style>
 </head>
 <body>
 
-<div class="sidebar">
-<h3>قائمة الطلاب</h3>
-<div id="studentList">
-<!-- أسماء الطلاب هتظهر هنا -->
-</div>
-</div>
-
 <div class="container">
-<h2>صفحة تصحيح مس رضوي</h2>
+<h2>اختبار شامل - الروابط والانحلال الحراري والإحلال البسيط</h2>
 
-<div id="loginDiv">
-<input type="password" id="pass" placeholder="ادخل كلمة السر">
-<button onclick="checkPass()">دخول</button>
+<form id="quizForm">
+<div class="section-title">أولاً: اختر الإجابة الصحيحة</div>
+<!-- ضع أسئلة الاختيار هنا مثل q1,q2 ... -->
+<div class="question">
+1- رابطة ملح الطعام:
+<br>
+<input type="radio" name="q1" value="تساهمية أحادية"> تساهمية أحادية
+<br>
+<input type="radio" name="q1" value="أيونية"> أيونية
+<br>
+<input type="radio" name="q1" value="تساهمية ثنائية"> تساهمية ثنائية
+<br>
+<input type="radio" name="q1" value="فلزية"> فلزية
 </div>
 
-<div id="dataDiv" style="display:none;">
-<h3>بيانات الطالب:</h3>
-<div id="info"></div>
-<h3>الإجابات:</h3>
-<div id="answers"></div>
+<!-- استكمال باقي الأسئلة بنفس الطريقة -->
+<div class="section-title">ثانياً: الأسئلة المقالية</div>
+<div class="question">
+15- علل: لا يتفاعل الذهب مع حمض الهيدروكلوريك
+<textarea name="q15"></textarea>
 </div>
+
+<button type="button" onclick="submitQuiz()">إرسال الإجابة</button>
+</form>
+
+<div id="adminDiv">
+<h3>قائمة الطلبة الذين امتحنوا:</h3>
+<table>
+<thead>
+<tr>
+<th>الاسم</th>
+<th>البريد</th>
+<th>الإجابات</th>
+</tr>
+</thead>
+<tbody id="studentsTable"></tbody>
+</table>
+</div>
+
 </div>
 
 <script>
-// الباسورد
-let adminPassword = "7720";
+// عند تسليم الطالب، نحفظ بياناته
+function submitQuiz(){
+let radios = document.querySelectorAll("input[type=radio]");
+let textareas = document.querySelectorAll("textarea");
 
-function checkPass(){
-    let input = document.getElementById("pass").value;
-    if(input === adminPassword){
-        document.getElementById("loginDiv").style.display="none";
-        document.getElementById("dataDiv").style.display="block";
-        loadStudentList();
+// نجمع الإجابات
+let answers = {};
+radios.forEach(r => {
+  if(r.checked) answers[r.name] = r.value;
+});
+textareas.forEach(t => {
+  answers[t.name] = t.value;
+});
+
+// مثال: بيانات الطالب
+let student = {
+  name: prompt("اكتب اسمك"),
+  email: prompt("ايميلك"),
+  answers: answers
+};
+
+// نخزن في localStorage كمصفوفة
+let students = JSON.parse(localStorage.getItem("students") || "[]");
+students.push(student);
+localStorage.setItem("students", JSON.stringify(students));
+
+alert("تم حفظ الإجابات بنجاح");
+document.getElementById("quizForm").reset();
+}
+
+// اختصار Alt+Z لفتح صفحة الأدمن
+document.addEventListener("keydown", function(e){
+  if(e.altKey && e.key.toLowerCase() === 'z'){
+    let pwd = prompt("ادخل كلمة سر الأدمن");
+    if(pwd === "12345"){
+      document.getElementById("adminDiv").style.display = "block";
+      displayStudents();
     } else {
-        alert("كلمة السر غير صحيحة");
+      alert("كلمة السر خاطئة");
     }
-}
+  }
+});
 
-// جلب قائمة الطلاب من localStorage
-function loadStudentList(){
-    let students = JSON.parse(localStorage.getItem("allStudents") || "[]");
-    let container = document.getElementById("studentList");
-    container.innerHTML = "";
-    students.forEach((student, index)=>{
-        let btn = document.createElement("button");
-        btn.textContent = student.name;
-        btn.onclick = ()=> showStudentData(index);
-        container.appendChild(btn);
-    });
-}
-
-// عرض بيانات الطالب وإجاباته
-function showStudentData(index){
-    let students = JSON.parse(localStorage.getItem("allStudents") || "[]");
-    let student = students[index];
-
-    document.getElementById("info").innerHTML =
-        "<p><b>الاسم:</b> " + student.name + "</p>" +
-        "<p><b>الايميل:</b> " + student.email + "</p>" +
-        "<p><b>نوع الاشتراك:</b> " + student.type + "</p>" +
-        "<p><b>الدرجة:</b> " + student.score + "</p>";
-
-    let answersHTML = "";
-    for(let key in student.answers){
-        answersHTML += "<p><b>"+key+":</b> "+student.answers[key]+"</p>";
-    }
-    document.getElementById("answers").innerHTML = answersHTML;
+function displayStudents(){
+  let students = JSON.parse(localStorage.getItem("students") || "[]");
+  let tbody = document.getElementById("studentsTable");
+  tbody.innerHTML = "";
+  students.forEach(s => {
+    let ans = JSON.stringify(s.answers, null, 2);
+    let row = `<tr>
+      <td>${s.name}</td>
+      <td>${s.email}</td>
+      <td><pre>${ans}</pre></td>
+    </tr>`;
+    tbody.innerHTML += row;
+  });
 }
 </script>
+
 </body>
 </html>
