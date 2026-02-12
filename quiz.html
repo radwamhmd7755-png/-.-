@@ -250,6 +250,12 @@ function submitQuiz(){
     // هنا يمكنك إضافة كود حفظ النتائج أو إرسالها للإيميل
 }
 </script>
-
+<script>
+document.addEventListener("keydown", function(e){
+    if(e.altKey && e.key.toLowerCase() === "z"){
+        window.location.href = "admin.html";
+    }
+});
+</script>
 </body>
 </html>
